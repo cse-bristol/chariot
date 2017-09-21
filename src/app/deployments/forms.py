@@ -68,7 +68,8 @@ class DeploymentUpdateForm(forms.ModelForm):
             'boiler_thermostat',
             'boiler_model',
             'boiler_output',
-            'boiler_efficiency', ]
+            'boiler_efficiency',
+            'safeguards_on']
         model = Deployment
 
 
@@ -107,7 +108,8 @@ class DeploymentCreateForm(forms.ModelForm):
             'boiler_thermostat',
             'boiler_model',
             'boiler_output',
-            'boiler_efficiency', ]
+            'boiler_efficiency',
+            'safeguards_on',]
         model = Deployment
 
 

@@ -45,6 +45,8 @@ class Deployment(models.Model):
 
     prediction = models.TextField(null=True, blank=True)
 
+    safeguards_on = models.BooleanField(default=False)
+
     def __str__(self):
         return '{client} Deployment'.format(client=self.client_name)
 
