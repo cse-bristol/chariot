@@ -1,6 +1,5 @@
-# encoding:UTF-8
+#encoding:UTF-
 import logging
-
 from chariot.influx import influx
 from datetime import datetime
 from django.core.urlresolvers import reverse
@@ -23,6 +22,7 @@ from hubs.forms import HubCreateForm
 from hubs.models import Hub
 from sensors.models import Sensor
 from sensors.serializers import SensorIDSerializer
+from deployments.receivers import receive_notification
 
 logger = logging.getLogger(__name__)
 
@@ -129,10 +129,19 @@ class SensorReading(APIView):
                 "value": float(request.data['value'])
             }
         }
+
         logger.info(reading)
         if 'timestamp' in request.data:
             reading['time'] = request.data['timestamp']
         if influx.write_points([reading]):
+            #hacky for now - would like to replace withg below + some logic about whether to store notification
+            #etc..
+            #influx.write_points([notification])
+            receive_notification(sender=self.__class__,
+                                 deployment_pk=hub.deployment.pk,
+                                 sensor=request.data['sensor'],
+                                 temp=float(request.data['value']))
+            
             return Response(reading, status=status.HTTP_201_CREATED)
         return Response("failed", status=status.HTTP_400_BAD_REQUEST)
 
