@@ -107,6 +107,8 @@ class DeploymentSensor(models.Model):
     nearest_thermostat = models.BooleanField(default=False)
     cost = models.FloatField(default=0)
     location = models.CharField(max_length=255, blank=True, null=True)
+    safeguard_temp_lower = models.FloatField(default=17)
+    safeguard_temp_upper = models.FloatField(default=25)
 
     class Meta:
         ordering = ['sensor']

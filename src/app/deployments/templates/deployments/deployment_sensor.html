@@ -62,6 +62,32 @@
             </div>
             </div>
 
+            <div style="display:flex; text-align: right">
+               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                 <label for="id_safeguard_temp_lower" class="mdl-textfield__label ">
+                    Min Safe Temp.
+                </label>
+                <div style="display: flex">
+                    {% crispy_field form.safeguard_temp_lower 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                    <div style="margin-top: 3px; margin-left: 3px; color: #666;">&deg;C</div>
+                </div>
+                <span class="mdl-textfield__error">{{ form.safeguard_temp_lower.errors }}</span>
+               </div>
+
+               <div style="width: 64px">&nbsp</div>
+               
+               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                 <label for="id_safeguard_temp_upper" class="mdl-textfield__label ">
+                    Max Safe Temp.
+                </label>
+                <div style="display: flex">
+                    {% crispy_field form.safeguard_temp_upper 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                    <div style="margin-top: 3px; margin-left: 3px; color: #666;">&deg;C</div>
+                </div>
+                <span class="mdl-textfield__error">{{ form.safeguard_temp_upper.errors }}</span>
+               </div>
+            </div>
+
             {% for reading in sensor.latest_readings %}
                 {% if reading.channel == sensor.sensor.cost_channel %}
                     <div style="display:flex">
