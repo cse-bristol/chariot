@@ -87,7 +87,7 @@
                 <span class="mdl-textfield__error">{{ form.safeguard_temp_upper.errors }}</span>
                </div>
             </div>
-
+              
             {% for reading in sensor.latest_readings %}
                 {% if reading.channel == sensor.sensor.cost_channel %}
                     <div style="display:flex">
@@ -96,11 +96,11 @@
                             {{ reading.channel.name }}
                         </label>
                         <div>
-                            {% if 'value' in reading %}
-                                {{ reading.value|floatformat }}{{ reading.channel.units }}
-                            {% else %}
-                                No data
-                            {% endif %}
+                          {% if 'value' in reading %}
+                             {{ reading.value|floatformat }}{{ reading.channel.units }}
+                          {% else %}
+                             No data
+                          {% endif %}
                         </div>
                     </div>
 
@@ -121,11 +121,15 @@
                             {{ reading.channel.name }}
                         </label>
                         <div>
-                            {% if 'value' in reading %}
-                                {{ reading.value|floatformat }}{{ reading.channel.units }}
-                            {% else %}
+                          {% if 'value' in reading %}
+                             {% if reading.channel.id == 'SAFEGUARD' %}
+                               {{ reading.value }} @ {{ reading.time }}
+                             {% else %}
+                               {{ reading.value|floatformat }}{{ reading.channel.units }}
+                             {% endif %}
+                          {% else %}
                                 No data
-                            {% endif %}
+                          {% endif %}
                         </div>
                     </div>
                 {% endif %}

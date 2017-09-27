@@ -1,5 +1,6 @@
 # encoding:UTF-8
 import datetime
+from enum import Enum
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -17,6 +18,10 @@ BOILER_TYPES = (
     (2, _("Electric"))
 )
 
+#Neded as influx channels currently expect float as value
+class SAFEGUARD_TYPE(Enum):
+    below_temp = 0
+    above_temp = 1
 
 class Deployment(models.Model):
     client_name = models.CharField(max_length=255)
@@ -109,7 +114,7 @@ class DeploymentSensor(models.Model):
     location = models.CharField(max_length=255, blank=True, null=True)
     safeguard_temp_lower = models.FloatField(default=17)
     safeguard_temp_upper = models.FloatField(default=25)
-
+    
     class Meta:
         ordering = ['sensor']
         verbose_name_plural = "Deployment Sensors"
@@ -134,7 +139,7 @@ class DeploymentSensor(models.Model):
                 pass
 
         return len(channels) > 0
-
+    
     @property
     def latest_reading(self):
         latest_reading = {}
@@ -145,12 +150,13 @@ class DeploymentSensor(models.Model):
                     .where('deployment').eq(self.deployment.pk) \
                     .where('sensor').eq(self.sensor.id).first()
                 if result:
+                    value = result['last']
                     if not latest_reading or result['time'] > latest_reading['time']:
                         latest_reading = {
                             'channel': channel,
                             'result': result,
                             'time': datetime.datetime.fromtimestamp(result['time']/1000.0),
-                            'value': result['last']
+                            'value': value
                         }
             except Exception as e:
                 pass
@@ -166,11 +172,16 @@ class DeploymentSensor(models.Model):
                 result = select('LAST').from_table(channel.id) \
                     .where('deployment').eq(self.deployment.pk) \
                     .where('sensor').eq(self.sensor.id).first()
+                value = result['last']
+                
+                if channel.id == 'SAFEGUARD':
+                    value = SAFEGUARD_TYPE(1).name
+                
                 latest_readings.append({
                     'channel': channel,
                     'result': result,
                     'time': result['time'],
-                    'value': result['last']
+                    'value': value
                 })
             except Exception as e:
                 latest_readings.append({
