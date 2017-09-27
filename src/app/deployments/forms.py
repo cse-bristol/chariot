@@ -136,7 +136,7 @@ class DeploymentSensorUpdateForm(forms.ModelForm):
     cost = forms.FloatField(required=False)
 
     class Meta:
-        fields = ['location', 'cost', 'nearest_thermostat', 'room_area', 'room_height', 'safeguard_temp_lower', 'safeguard_temp_upper']
+        fields = ['location', 'cost', 'nearest_thermostat', 'room_area', 'room_height', 'safeguard_temp_lower', 'safeguard_temp_upper','last_notification_sent']
         model = DeploymentSensor
 
 

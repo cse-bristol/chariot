@@ -47,9 +47,6 @@
                 </div>
                 <span class="mdl-textfield__error">{{ form.room_area.errors }}</span>
             </div>
-
-                <div style="width: 64px">&nbsp</div>
-
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <label for="id_room_height" class="mdl-textfield__label ">
                     Room Height
@@ -62,6 +59,9 @@
             </div>
             </div>
 
+            Here
+            {% crispy_field form.last_notification_sent 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+            
             <div style="display:flex; text-align: right">
                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                  <label for="id_safeguard_temp_lower" class="mdl-textfield__label ">
