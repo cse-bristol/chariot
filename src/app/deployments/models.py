@@ -46,7 +46,11 @@ class Deployment(models.Model):
     prediction = models.TextField(null=True, blank=True)
 
     safeguards_on = models.BooleanField(default=False)
-
+    advisor_email = models.EmailField(max_length=254,null=True, blank=True,help_text="Only complete if advisors need to receive advisor safeguarding notifications")
+    advisor_phone = models.CharField(max_length=20,null=True, blank=True,help_text="Only complete if you want too receive advisor safeguarding notifications")
+    client_email = models.EmailField(max_length=254,null=True, blank=True,help_text="Only complete if a client need to receive safeguarding notifications")
+    client_phone =  models.CharField(max_length=20,null=True, blank=True,help_text="Only complete if a client needs to receive safeguarding notifications")
+        
     def __str__(self):
         return '{client} Deployment'.format(client=self.client_name)
 

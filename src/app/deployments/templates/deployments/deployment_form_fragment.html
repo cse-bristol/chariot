@@ -91,6 +91,32 @@
     </div>
 
     <div style="display: flex">
+       <div id="div_id_advisor_email" style="flex:1">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label for="id_advisor_email" class="mdl-textfield__label requiredField">
+                    Advisor email address
+                </label>
+                <div style="display: flex">
+                    {% crispy_field form.advisor_email 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                </div>
+            </div>
+       </div>
+       <div style="width: 16px">&nbsp</div>
+       <div id="div_id_advisor_phone" style="flex:1">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label for="id_advisor_phone" class="mdl-textfield__label requiredField">
+                    Advisor phone number
+                </label>
+                <div style="display: flex">
+                    {% crispy_field form.advisor_phone 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    
+    <div style="display: flex">
         <div id="div_id_building_area" style="flex:1">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <label for="id_building_area" class="mdl-textfield__label requiredField">

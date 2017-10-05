@@ -69,7 +69,11 @@ class DeploymentUpdateForm(forms.ModelForm):
             'boiler_model',
             'boiler_output',
             'boiler_efficiency',
-            'safeguards_on']
+            'safeguards_on',
+            'advisor_email',
+            'advisor_phone',
+            'client_email',
+            'client_phone',]
         model = Deployment
 
 
@@ -109,7 +113,11 @@ class DeploymentCreateForm(forms.ModelForm):
             'boiler_model',
             'boiler_output',
             'boiler_efficiency',
-            'safeguards_on',]
+            'safeguards_on',
+            'advisor_email',
+            'advisor_phone',
+            'client_email',
+            'client_phone',]
         model = Deployment
 
 
