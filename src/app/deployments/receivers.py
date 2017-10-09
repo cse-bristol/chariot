@@ -2,7 +2,7 @@
 #from django.dispatch import reciever
 from chariot.influx import influx
 from deployments.models import Deployment, DeploymentSensor
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, time
 import smtplib
 
 #@reciever(sensor_reading_recieved)
@@ -28,12 +28,9 @@ def receive_notification(sender, deployment_pk, sensor, temp):
     except Deployment.DoesNotExist:
         raise HttpResponse(status=404)
 
-def _send_notifications(deployment,sensor,value):
-    if _ok_to_send_notification(sensor.last_notification_sent):
-        _send_notification_email(deployment,sensor,"XXX")
-        sensor.last_notification_sent = datetime.today()
-        sensor.save()
-
+def _send_notifications(deployment,sensor,notification_type):
+    _send_client_notification(deployment, sensor, notification_type)
+    
 def _ok_to_send_notification(last_notification_sent):
     an_hour = timedelta(seconds=60*60)
     an_hour = timedelta(seconds=20) ##TODO REMOVE BEFORE COMMIT
@@ -42,6 +39,15 @@ def _ok_to_send_notification(last_notification_sent):
     else:
         return True
 
+def _send_client_notification(deployment, sensor, notification_type):
+    time_now = datetime.now(sensor.last_notification_sent.tzinfo).time()
+    email_msg = "Message content %s" % (deployment.client_notifications_from < time_now)
+
+    if _ok_to_send_notification(sensor.last_notification_sent) and deployment.client_email is not None and deployment.client_notifications_from < time_now and time_now < deployment.client_notifications_to:
+        _send_notification_email(email_msg, notification_type, deployment.client_email)
+        sensor.last_notification_sent = datetime.today()
+        sensor.save()
+                                
 def _store_notification(deployment,sensor_id,value):
     notification = {
         "measurement": "SAFEGUARD",
@@ -55,14 +61,10 @@ def _store_notification(deployment,sensor_id,value):
     }
     influx.write_points([notification])
 
-
-def _send_notification_email(deployment,sensor,notification_type):
-    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    server.ehlo()
-    #server.starttls()
-    server.login("membershipmanagerdemo@gmail.com", "PASSWORD")
-    
-    msg = "\nHello!"
-    server.sendmail("you@gmail.com", "richard.tiffin@cse.org.uk", msg)
-    server.quit()
+def _send_notification_email(msg, notification_type, to):
+     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+     server.ehlo()
+     server.login("membershipmanagerdemo@gmail.com", "69c1f074bef7b5493b28d7cc54799e2a")
+     server.sendmail("you@gmail.com", to, msg)
+     server.quit()
     

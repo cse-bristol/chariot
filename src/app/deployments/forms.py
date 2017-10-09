@@ -73,7 +73,9 @@ class DeploymentUpdateForm(forms.ModelForm):
             'advisor_email',
             'advisor_phone',
             'client_email',
-            'client_phone',]
+            'client_phone',
+            'client_notifications_from',
+            'client_notifications_to']
         model = Deployment
 
 
@@ -117,7 +119,9 @@ class DeploymentCreateForm(forms.ModelForm):
             'advisor_email',
             'advisor_phone',
             'client_email',
-            'client_phone',]
+            'client_phone',
+            'client_notifications_from',
+            'client_notifications_to',]
         model = Deployment
 
 

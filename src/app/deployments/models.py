@@ -50,7 +50,9 @@ class Deployment(models.Model):
     advisor_phone = models.CharField(max_length=20,null=True, blank=True,help_text="Only complete if you want too receive advisor safeguarding notifications")
     client_email = models.EmailField(max_length=254,null=True, blank=True,help_text="Only complete if a client need to receive safeguarding notifications")
     client_phone =  models.CharField(max_length=20,null=True, blank=True,help_text="Only complete if a client needs to receive safeguarding notifications")
-        
+    client_notifications_from = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,help_text="If left blank notifications will be sent when they are generated")
+    client_notifications_to = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,help_text="If left blank notifications will be sent when they are generated")
+            
     def __str__(self):
         return '{client} Deployment'.format(client=self.client_name)
 
