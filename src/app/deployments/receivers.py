@@ -33,10 +33,13 @@ def receive_notification(sender, deployment_pk, sensor, temp):
     
 def _ok_to_send_notification(last_notification_sent):
     an_hour = timedelta(seconds=60*60)
-    if last_notification_sent is not None and datetime.now(last_notification_sent.tzinfo) < (last_notification_sent + an_hour):
-        return False
+    if last_notification_sent is not None:
+        if datetime.now(last_notification_sent.tzinfo) < (last_notification_sent + an_hour):
+            return False
+        else:
+            return True
     else:
-        return True
+        return False
 
 def _send_advisor_notifications(deployment, sensor, notification_type):
     if _ok_to_send_notification(sensor.last_advisor_notification_sent):
