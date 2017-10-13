@@ -16,12 +16,14 @@ def receive_notification(sender, deployment_pk, sensor, temp):
         s = DeploymentSensor.objects.get(
             deployment=deployment_pk,
             sensor=sensor)
-        
+
+        notification_type = None
         if deployment.safeguards_on == True and temp < s.safeguard_temp_lower:
             notification_type = "BELOW MIN TEMP."
              
         elif deployment.safeguards_on == True and temp >  s.safeguard_temp_upper:
             notification_type = "ABOVE MAX TEMP."
+
          
         if notification_type is not None:
             _send_advisor_notifications(deployment, s, notification_type)
@@ -34,7 +36,7 @@ def receive_notification(sender, deployment_pk, sensor, temp):
 def _ok_to_send_notification(last_notification_sent):
     an_hour = timedelta(seconds=60*60)
     if last_notification_sent is not None:
-        if datetime.now(last_notification_sent.tzinfo) < (last_notification_sent + an_hour):
+        if datetime.now() < (last_notification_sent + an_hour):
             return False
         else:
             return True
@@ -54,7 +56,7 @@ def _send_advisor_notifications(deployment, sensor, notification_type):
         sensor.save()
 
 def _send_client_notifications(deployment, sensor, notification_type):
-    time_now = datetime.now(sensor.last_notification_sent.tzinfo).time()
+    time_now = datetime.now().time()
 
     if _ok_to_send_notification(sensor.last_notification_sent) and deployment.client_notifications_from < time_now and time_now < deployment.client_notifications_to:
         email_subj = "Room %s is %s" % (sensor.location, notification_type)
