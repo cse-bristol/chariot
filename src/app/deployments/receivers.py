@@ -41,7 +41,7 @@ def _ok_to_send_notification(last_notification_sent):
         else:
             return True
     else:
-        return False
+        return True
 
 def _send_advisor_notifications(deployment, sensor, notification_type):
     if _ok_to_send_notification(sensor.last_advisor_notification_sent):
@@ -84,7 +84,7 @@ def _store_notification(deployment,sensor_id,value):
 
 def _send_notification_sms(msg, to):
     if to is not None:
-        data =  urllib.parse.urlencode({'apikey': "Qf9UaN3TXaQ-E6bxqZA3lN8kAAICq5igs77DOUWyOz", 'numbers': to, 'message' : msg, 'sender': "CSE"})
+        data =  urllib.parse.urlencode({'apikey': "", 'numbers': to, 'message' : msg, 'sender': "CSE"})
         data = data.encode('utf-8')
         request = urllib.request.Request("https://api.txtlocal.com/send/?")
         f = urllib.request.urlopen(request, data)
