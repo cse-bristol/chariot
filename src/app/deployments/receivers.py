@@ -36,7 +36,7 @@ def receive_notification(sender, deployment_pk, sensor, temp):
 def _ok_to_send_notification(last_notification_sent):
     an_hour = timedelta(seconds=60*60)
     if last_notification_sent is not None:
-        if datetime.now() < (last_notification_sent + an_hour):
+        if datetime.now(last_notification_sent.tzinfo) < (last_notification_sent + an_hour):
             return False
         else:
             return True
@@ -60,7 +60,7 @@ def _send_client_notifications(deployment, sensor, notification_type):
 
     if _ok_to_send_notification(sensor.last_notification_sent) and deployment.client_notifications_from < time_now and time_now < deployment.client_notifications_to:
         email_subj = "Room %s is %s" % (sensor.location, notification_type)
-        email_msg =  "Hello %s, room %s is %s" % (deployment.client_name, sensor.location, notification_type)    
+        email_msg =  "Hello %s, your room %s is %s your desired temperature. We will be in touch with you soon to discuss this" % (deployment.client_name, sensor.location, notification_type)    
         txt_msg = email_msg
         
         _send_notification_email(email_subj, email_msg, notification_type, deployment.client_email)
@@ -84,7 +84,7 @@ def _store_notification(deployment,sensor_id,value):
 
 def _send_notification_sms(msg, to):
     if to is not None:
-        data =  urllib.parse.urlencode({'apikey': "Qf9UaN3TXaQ-E6bxqZA3lN8kAAICq5igs77DOUWyOz", 'numbers': to, 'message' : msg, 'sender': "CSE"})
+        data =  urllib.parse.urlencode({'apikey': "", 'numbers': to, 'message' : msg, 'sender': "HomeEnergy"})
         data = data.encode('utf-8')
         request = urllib.request.Request("https://api.txtlocal.com/send/?")
         f = urllib.request.urlopen(request, data)
@@ -93,12 +93,12 @@ def _send_notification_sms(msg, to):
     
 def _send_notification_email(subj, msg_text, notification_type, to):
     if to is not None:
-        from_addr = "CSE <advice@cse.org.uk>"
+        from_addr = "Home Energy Team <advice@cse.org.uk>"
         date = datetime.now()
         msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s" % ( from_addr, to, subj, date, msg_text )
         
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server = smtplib.SMTP_SSL('', 465)
         server.ehlo()
-        server.login("membershipmanagerdemo@gmail.com", "")
+        server.login("", "")
         server.sendmail("advice@cse.org.uk", to, msg)
         server.quit()
