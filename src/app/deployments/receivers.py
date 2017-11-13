@@ -40,7 +40,7 @@ def _ok_to_send_notification(last_notification_sent):
         else:
             return True
     else:
-        return False
+        return True
 
 def _send_advisor_notifications(deployment, sensor, notification_type):
     if _ok_to_send_notification(sensor.last_advisor_notification_sent):
@@ -92,12 +92,12 @@ def _send_notification_sms(msg, to):
     
 def _send_notification_email(subj, msg_text, notification_type, to):
     if to is not None:
-        from_addr = "Home Energy Team <advice@cse.org.uk>"
+        from_addr = "Home Energy Team <nhm-support@cse.org.uk>"
         date = datetime.now()
         msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s" % ( from_addr, to, subj, date, msg_text )
         
-        server = smtplib.SMTP_SSL('', 465)
+        server = smtplib.SMTP_SSL('', 587)
         server.ehlo()
         server.login("", "")
-        server.sendmail("advice@cse.org.uk", to, msg)
+        server.sendmail("nhm-support@cse.org.uk", to, msg)
         server.quit()
