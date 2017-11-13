@@ -18,12 +18,11 @@ def receive_notification(sender, deployment_pk, sensor, temp):
             sensor=sensor)
 
         notification_type = None
-        if deployment.safeguards_on == True and temp < s.safeguard_temp_lower:
+        if deployment.safeguards_on == True and temp < s.safeguard_temp_lower and s.notifications_on == True:
             notification_type = "BELOW MIN TEMP."
              
-        elif deployment.safeguards_on == True and temp >  s.safeguard_temp_upper:
+        elif deployment.safeguards_on == True and temp >  s.safeguard_temp_upper and s.notificatins_on == True:
             notification_type = "ABOVE MAX TEMP."
-
          
         if notification_type is not None:
             _send_advisor_notifications(deployment, s, notification_type)

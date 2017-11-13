@@ -59,8 +59,15 @@
             </div>
             </div>
 
+	    <div>
+	       <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="id_notifications_on" style="margin-bottom: 16px">
+		 {% crispy_field form.notifications_on  'class' 'mdl-checkbox__input' %}
+		 <span class="mdl-checkbox__label">Safeguarding on</span>
+	        </label>
+	    </div>
+	    
             <div style="display:flex; text-align: right">
-               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+	       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                  <label for="id_safeguard_temp_lower" class="mdl-textfield__label ">
                     Min Safe Temp.
                 </label>

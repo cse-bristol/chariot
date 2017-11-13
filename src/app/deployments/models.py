@@ -117,6 +117,7 @@ class DeploymentSensor(models.Model):
     safeguard_temp_upper = models.FloatField(default=25)
     last_notification_sent = models.DateTimeField(blank=True, null=True)
     last_advisor_notification_sent = models.DateTimeField(blank=True, null=True)
+    notifications_on = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['sensor']
