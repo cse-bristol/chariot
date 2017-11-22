@@ -23,7 +23,7 @@ def receive_notification(sender, deployment_pk, sensor, temp):
         if deployment.safeguards_on == True and temp < s.safeguard_temp_lower and s.notifications_on == True:
             notification_type = "BELOW MIN TEMP."
 
-        elif deployment.safeguards_on == True and temp >  s.safeguard_temp_upper and s.notificatins_on == True:
+        elif deployment.safeguards_on == True and temp >  s.safeguard_temp_upper and s.notifications_on == True:
             notification_type = "ABOVE MAX TEMP."
 
         if notification_type is not None:
@@ -94,13 +94,13 @@ def _send_notification_sms(msg, to):
         f = urllib.request.urlopen(request, data)
         fr = f.read()
         return(fr)
-    
+
 def _send_notification_email(subj, msg_text, notification_type, to):
     if to is not None:
         from_addr = "Home Energy Team <nhm-support@cse.org.uk>"
         date = datetime.now()
         msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s" % ( from_addr, to, subj, date, msg_text )
-        
+
         server = smtplib.SMTP_SSL('', 587)
         server.ehlo()
         server.login("", "")
