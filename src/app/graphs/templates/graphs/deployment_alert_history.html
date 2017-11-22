@@ -1,0 +1,36 @@
+{% extends 'chariot/base.html' %}
+
+{% block scripts %}
+<link rel="stylesheet" href="/styles/alert-history.css">
+<!-- TODO: hover tooltips? -->
+{% endblock %}
+
+{% block docTitle %}{{ deployment.client_name }} Deployment Alert History{% endblock %}
+{% block title %}{{ deployment.client_name }} Deployment{% endblock %}
+
+{% block content %}
+<table class="mdl-data-table">
+    <thead>
+        <tr>
+            <td>Date</td>
+            <td>Location</td>
+            <td>Measurement</td>
+            <td>Value</td>
+            <td>Lower limit</td>
+            <td>Upper limit</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for alert in alerts %}
+        <tr>
+            <td>{{ alert.datetime }}</td>
+            <td>{{ alert.location }}</td>
+            <td>{{ alert.measurement }}</td>
+            <td>{{ alert.value }}</td>
+            <td>{{ alert.lower_limit }}</td>
+            <td>{{ alert.upper_limit }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

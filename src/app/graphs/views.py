@@ -7,7 +7,7 @@ from django.http import HttpResponse, StreamingHttpResponse
 from django.views.generic import DetailView
 
 from chariot import utils
-from chariot.influx import select
+from chariot.influx import select, influx
 from chariot.mixins import BackButtonMixin, LoginRequiredMixin
 from deployments.models import Deployment, DeploymentAnnotation
 from graphs import simplify
@@ -136,4 +136,55 @@ class DeploymentGraphView(LoginRequiredMixin, BackButtonMixin, DetailView):
 
         context['dateTo'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         context['dateFrom'] = deployment.start_date.strftime("%Y-%m-%d %H:%M:%S")
+        return context
+
+class DeploymentAlertView(LoginRequiredMixin, BackButtonMixin, DetailView):
+    model = Deployment
+    template_name = 'graphs/deployment_alert_history.html'
+
+    def get_back_url(self):
+        return reverse('deployments:update', args=(self.object.id,))
+
+    @staticmethod
+    def format_alert(alert, sensor_deployments):
+        sensor_deployment_id = alert["sensor_deployment"]
+        sensor_deployment_id = int(sensor_deployment_id) if sensor_deployment_id is not None else None
+        channel_id = alert["channel"]
+
+        ## It would be more convenient to use deployment.sensors.get(pk = sensor_deployment_id)
+        ## However, this would result in many more database queries, which is slow
+        ## Instead, we preload everything (shouldn't be very much data) and filter it in Python
+        sensor_deployment = [sd for sd in sensor_deployments if sd.id == sensor_deployment_id]
+        sensor_deployment = sensor_deployment[0] if len(sensor_deployment) == 1 else None
+        sensor = sensor_deployment.sensor if sensor_deployment else None
+
+        if sensor:
+            channel = [channel for channel in sensor.channels.all() if channel.id == channel_id]
+            channel = channel[0] if len(channel) == 1 else None
+
+            measurement = channel.name if channel else None
+        else:
+            measurement = ""
+
+        return {
+            "datetime": alert["time"][0:10] + " " + alert["time"][12:19],
+            "value": alert["value"],
+            "location": sensor_deployment.location if sensor_deployment else "",
+            "measurement": measurement,
+            "lower_limit": alert["lower_limit"],
+            "upper_limit": alert["upper_limit"]
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super(DeploymentAlertView, self).get_context_data(**kwargs)
+        deployment = self.get_object()
+
+        sensor_deployments = deployment.sensors.all().prefetch_related("sensor__channels")
+
+        context["alerts"] = [
+            DeploymentAlertView.format_alert(alert, sensor_deployments) for alert in influx.query(
+                "SELECT value, deployment, sensor_deployment, channel, lower_limit, upper_limit FROM SAFEGUARD ORDER BY time DESC LIMIT 10000"
+            ).get_points()
+        ]
+
         return context

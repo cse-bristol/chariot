@@ -17,21 +17,23 @@ def receive_notification(sender, deployment_pk, sensor, temp):
             deployment=deployment_pk,
             sensor=sensor)
 
+        channel_id = "TEMP"
+
         notification_type = None
         if deployment.safeguards_on == True and temp < s.safeguard_temp_lower and s.notifications_on == True:
             notification_type = "BELOW MIN TEMP."
-             
+
         elif deployment.safeguards_on == True and temp >  s.safeguard_temp_upper and s.notificatins_on == True:
             notification_type = "ABOVE MAX TEMP."
-         
+
         if notification_type is not None:
             _send_advisor_notifications(deployment, s, notification_type)
             _send_client_notifications(deployment, s, notification_type)
-            _store_notification(deployment, s, temp)
-            
+            _store_notification(deployment.id, s.id, channel_id, s.safeguard_temp_lower, s.safeguard_temp_upper, temp)
+
     except Deployment.DoesNotExist:
         raise HttpResponse(status=404)
-    
+
 def _ok_to_send_notification(last_notification_sent):
     an_hour = timedelta(seconds=60*60)
     if last_notification_sent is not None:
@@ -67,16 +69,19 @@ def _send_client_notifications(deployment, sensor, notification_type):
 
         sensor.last_notification_sent = datetime.today()
         sensor.save()
-                                
-def _store_notification(deployment,sensor_id,value):
+
+def _store_notification(deployment_id, sensor_deployment_id, channel_id, lower_limit, upper_limit, value):
     notification = {
         "measurement": "SAFEGUARD",
         "tags": {
-            "deployment": deployment,
-            "sensor": sensor_id
+            "deployment": deployment_id,
+            "sensor_deployment": sensor_deployment_id,
+            "channel": channel_id
         },
         "fields": {
-            "value" : value
+            "value" : value,
+            "lower_limit": lower_limit,
+            "upper_limit": upper_limit
         }
     }
     influx.write_points([notification])
