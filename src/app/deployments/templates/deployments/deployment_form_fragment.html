@@ -5,9 +5,9 @@
     {% csrf_token %}
     <div id="div_id_photo" class="">
         <label id="label_id_photo" class="mdl-typography--title deployment-header mdl-color--blue-900"
-                {% if form.photo.value %}
+               {% if form.photo.value %}
                style="background-image: url('{{MEDIA_URL}}{{ form.photo.value }}')"
-                {% endif %}
+               {% endif %}
                for="id_photo">
             <i class="material-icons">file_upload</i>
             Header Image
@@ -18,24 +18,24 @@
         </div>
 
         <script>
-			var input = document.getElementById('id_photo');
-			input.onchange = function () {
-				var label = document.getElementById('label_id_photo');
-				if(this.files.length > 0) {
-					label.innerHTML = 'Header Image: ' + this.files[0].name;
-				}
-				else {
-					label.innerHTML = 'Header Image';
-				}
-			};
+	 var input = document.getElementById('id_photo');
+	 input.onchange = function () {
+	     var label = document.getElementById('label_id_photo');
+	     if(this.files.length > 0) {
+		 label.innerHTML = 'Header Image: ' + this.files[0].name;
+	     }
+	     else {
+		 label.innerHTML = 'Header Image';
+	     }
+	 };
         </script>
     </div>
     {% if form_show_errors %}
-        {% for error in field.errors %}
-            <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="errorField">
-                {{ error }}
-            </p>
-        {% endfor %}
+    {% for error in field.errors %}
+    <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="errorField">
+        {{ error }}
+    </p>
+    {% endfor %}
     {% endif %}
 
     {{ form.non_field_errors }}
@@ -50,17 +50,17 @@
     </div>
 
     {% if not deployment %}
-        <div id="div_id_hub" class="">
-            <div style="padding-top: 8px" class="mdl-textfield mdl-js-textfield">
-                <label class="mdl-typography--caption mdl-color-text--primary requiredField" for="id_hub">
-                    Hub
-                </label>
-                <label class="mdl-textfield__label"></label>
-                <div><i class="material-icons" style="position: absolute; right: 0; z-index: -10;">arrow_drop_down</i>
-                    {% crispy_field form.hub 'class' 'mdl-textfield__input' 'style' '-webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 24px; border-radius: 0' %}
-                </div>
+    <div id="div_id_hub" class="">
+        <div style="padding-top: 8px" class="mdl-textfield mdl-js-textfield">
+            <label class="mdl-typography--caption mdl-color-text--primary requiredField" for="id_hub">
+                Hub
+            </label>
+            <label class="mdl-textfield__label"></label>
+            <div><i class="material-icons" style="position: absolute; right: 0; z-index: -10;">arrow_drop_down</i>
+                {% crispy_field form.hub 'class' 'mdl-textfield__input' 'style' '-webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 24px; border-radius: 0' %}
             </div>
         </div>
+    </div>
     {% endif %}
 
     <div id="div_id_address_line_one" class="">
@@ -81,91 +81,6 @@
         </div>
     </div>
 
-    <div id="div_id_safeguards_on" class="">
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <label for="id_safeguards_on" class="mdl-textfield__label requiredField">
-                Safeguards On
-            </label>
-            {% crispy_field form.safeguards_on 'class' 'mdl-textfield__input' %}
-        </div>
-    </div>
-
-    <div style="display: flex">
-       <div id="div_id_advisor_email" style="flex:1">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label for="id_advisor_email" class="mdl-textfield__label requiredField">
-                    Advisor email
-                </label>
-                <div style="display: flex">
-                    {% crispy_field form.advisor_email 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
-                </div>
-            </div>
-       </div>
-       <div style="width: 16px">&nbsp</div>
-       <div id="div_id_advisor_phone" style="flex:1">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label for="id_advisor_phone" class="mdl-textfield__label requiredField">
-                    Advisor phone number
-                </label>
-                <div style="display: flex">
-                    {% crispy_field form.advisor_phone 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="display: flex">
-       <div id="div_id_client_email" style="flex:1">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label for="id_client_email" class="mdl-textfield__label requiredField">
-                    Client email
-                </label>
-                <div style="display: flex">
-                    {% crispy_field form.client_email 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
-                </div>
-            </div>
-       </div>
-       <div style="width: 16px">&nbsp</div>
-       <div id="div_id_client_phone" style="flex:1">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label for="id_client_phone" class="mdl-textfield__label requiredField">
-                    Client phone number
-                </label>
-                <div style="display: flex">
-                    {% crispy_field form.client_phone 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="display: flex">
-      <h5>Send client notifications</h5>
-    </div>
-
-    <div style="display: flex">
-       <div id="div_id_client_notifications_from" style="flex:1">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label for="id_client_notifications_from" class="mdl-textfield__label requiredField">
-                    Notifications from hh:mm:ss...
-                </label>
-                <div style="display: flex">
-                    {% crispy_field form.client_notifications_from 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right' 'pattern' '([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'%}
-                </div>
-            </div>
-       </div>
-       <div style="width: 16px">&nbsp</div>
-       <div id="div_id_client_notifications_to" style="flex:1">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <label for="id_client_client_notifications_to" class="mdl-textfield__label requiredField">
-                  ..to hh:mm:ss
-                </label>
-                <div style="display: flex">
-                    {% crispy_field form.client_notifications_to 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right' 'pattern' '([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'%}
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <div style="display: flex">
         <div id="div_id_building_area" style="flex:1">
             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -192,31 +107,31 @@
         </div>
     </div>
 
-	<div style="display: flex">
-		<div id="div_id_boiler_thermostat" style="flex:1">
-			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				<label for="id_boiler_thermostat" class="mdl-textfield__label ">
-					Thermostat Setting
-				</label>
-				<div style="display: flex">
-					{% crispy_field form.boiler_thermostat 'class' 'mdl-textfield__input' 'style' 'text-align:right' %}
-					<div style="margin-top: 3px; margin-left: 3px; color: #666;" title="degrees celsius">°C</div>
-				</div>
-			</div>
+    <div style="display: flex">
+	<div id="div_id_boiler_thermostat" style="flex:1">
+	    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		<label for="id_boiler_thermostat" class="mdl-textfield__label ">
+		    Thermostat Setting
+		</label>
+		<div style="display: flex">
+		    {% crispy_field form.boiler_thermostat 'class' 'mdl-textfield__input' 'style' 'text-align:right' %}
+		    <div style="margin-top: 3px; margin-left: 3px; color: #666;" title="degrees celsius">°C</div>
 		</div>
-		<div style="width: 24px">&nbsp</div>
-		<div id="div_id_boiler_type" style="flex:1">
-			<div style="padding-top: 0" class="mdl-textfield mdl-js-textfield">
-				<label class="mdl-typography--caption mdl-color-text--primary requiredField" for="id_hub">
-					Boiler Type
-				</label>
-				<label class="mdl-textfield__label"></label>
-				<div><i class="material-icons" style="position: absolute; right: 0; z-index: -10;">arrow_drop_down</i>
-					{% crispy_field form.boiler_type 'class' 'mdl-textfield__input' 'style' '-webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 24px; border-radius: 0' %}
-				</div>
-			</div>
-		</div>
+	    </div>
 	</div>
+	<div style="width: 24px">&nbsp</div>
+	<div id="div_id_boiler_type" style="flex:1">
+	    <div style="padding-top: 0" class="mdl-textfield mdl-js-textfield">
+		<label class="mdl-typography--caption mdl-color-text--primary requiredField" for="id_hub">
+		    Boiler Type
+		</label>
+		<label class="mdl-textfield__label"></label>
+		<div><i class="material-icons" style="position: absolute; right: 0; z-index: -10;">arrow_drop_down</i>
+		    {% crispy_field form.boiler_type 'class' 'mdl-textfield__input' 'style' '-webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 24px; border-radius: 0' %}
+		</div>
+	    </div>
+	</div>
+    </div>
 
     <div style="display: flex">
         <div id="div_id_boiler_manufacturer" style="flex:1">
@@ -226,13 +141,13 @@
                 </label>
                 <datalist id="boilers">
                     <option value="Worcester">
-                    <option value="Vaillant">
-                    <option value="Vokera">
-                    <option value="Baxi">
-                    <option value="Biasi">
-                    <option value="Ideal">
-                    <option value="Firebird">
-                    <option value="Alpha">
+                        <option value="Vaillant">
+                            <option value="Vokera">
+                                <option value="Baxi">
+                                    <option value="Biasi">
+                                        <option value="Ideal">
+                                            <option value="Firebird">
+                                                <option value="Alpha">
                 </datalist>
                 <input class="textinput textInput mdl-textfield__input" id="id_boiler_manufacturer" maxlength="255" name="boiler_manufacturer" list="boilers" type="text" value="{{ deployment.boiler_manufacturer }}">
             </div>
@@ -273,6 +188,96 @@
         </div>
     </div>
 
+    <fieldset style="border: 1px solid #e0e0e0; padding: 1rem; padding-bottom: 0; margin-bottom: 1rem;">
+
+        <legend>Safeguarding</legend>
+
+        <div id="div_id_safeguards_on" class="">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label for="id_safeguards_on" class="mdl-textfield__label requiredField">
+                    Safeguards On
+                </label>
+                {% crispy_field form.safeguards_on 'class' 'mdl-textfield__input' %}
+            </div>
+        </div>
+
+        <div style="display: flex">
+            <div id="div_id_advisor_email" style="flex:1">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <label for="id_advisor_email" class="mdl-textfield__label requiredField">
+                        Advisor email
+                    </label>
+                    <div style="display: flex">
+                        {% crispy_field form.advisor_email 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                    </div>
+                </div>
+            </div>
+            <div style="width: 16px">&nbsp</div>
+            <div id="div_id_advisor_phone" style="flex:1">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <label for="id_advisor_phone" class="mdl-textfield__label requiredField">
+                        Advisor phone number
+                    </label>
+                    <div style="display: flex">
+                        {% crispy_field form.advisor_phone 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex">
+            <div id="div_id_client_email" style="flex:1">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <label for="id_client_email" class="mdl-textfield__label requiredField">
+                        Client email
+                    </label>
+                    <div style="display: flex">
+                        {% crispy_field form.client_email 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                    </div>
+                </div>
+            </div>
+            <div style="width: 16px">&nbsp</div>
+            <div id="div_id_client_phone" style="flex:1">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <label for="id_client_phone" class="mdl-textfield__label requiredField">
+                        Client phone number
+                    </label>
+                    <div style="display: flex">
+                        {% crispy_field form.client_phone 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right'%}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex">
+            <h6>Client notification hours</h5>
+        </div>
+
+        <div style="display: flex">
+            <div id="div_id_client_notifications_from" style="flex:1">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <label for="id_client_notifications_from" class="mdl-textfield__label requiredField">
+                        Notifications from hh:mm:ss...
+                    </label>
+                    <div style="display: flex">
+                        {% crispy_field form.client_notifications_from 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right' 'pattern' '([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'%}
+                    </div>
+                </div>
+            </div>
+            <div style="width: 16px">&nbsp</div>
+            <div id="div_id_client_notifications_to" style="flex:1">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <label for="id_client_client_notifications_to" class="mdl-textfield__label requiredField">
+                        ..to hh:mm:ss
+                    </label>
+                    <div style="display: flex">
+                        {% crispy_field form.client_notifications_to 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right' 'pattern' '([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'%}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </fieldset>
+
     <input type="submit" value="{{ button }}" class="submit submitButton mdl-button mdl-js-button button_right mdl-button--raised mdl-button--colored" id="submit-id-add_hub">
 </form>
-
