@@ -61,9 +61,9 @@ def _send_client_notifications(deployment, sensor, notification_type):
 
     if _ok_to_send_notification(sensor.last_notification_sent) and deployment.client_notifications_from < time_now and time_now < deployment.client_notifications_to:
         email_subj = "Room %s is %s" % (sensor.location, notification_type)
-        email_msg =  "Hello %s, your room %s is %s your desired temperature. We will be in touch with you soon to discuss this" % (deployment.client_name, sensor.location, notification_type)    
+        email_msg =  "Hello %s, your %s is %s your desired temperature. We will be in touch with you soon to discuss this" % (deployment.client_name, sensor.location, notification_type)
         txt_msg = email_msg
-        
+
         _send_notification_email(email_subj, email_msg, notification_type, deployment.client_email)
         _send_notification_sms(email_msg, deployment.client_phone)
 
