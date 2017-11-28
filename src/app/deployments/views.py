@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.views.generic import CreateView, ListView, UpdateView, DetailView, DeleteView
 from django.views.generic.edit import BaseUpdateView
+from django.db import transaction
 
 from chariot.mixins import BackButtonMixin, LoginRequiredMixin
 from .forms import *
@@ -14,6 +15,37 @@ class DeploymentCreateView(LoginRequiredMixin, BackButtonMixin, CreateView):
     form_class = DeploymentCreateForm
     model = Deployment
     template_name = 'deployments/deployment_create.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+        schedule_form = DeploymentScheduleFormset(initial=[{"day_of_week": i} for i in range(7)])
+        return self.render_to_response(
+            self.get_context_data(form=form,
+                                  schedule_form=schedule_form))
+
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form = self.get_form()
+        schedule_form = DeploymentScheduleFormset(self.request.POST)
+
+        if (form.is_valid() and schedule_form.is_valid()):
+            return self.form_valid(form, schedule_form)
+        else:
+            return self.form_invalid(form, schedule_form)
+
+    def form_valid(self, form, schedule_form):
+        with transaction.atomic():
+            result = super(DeploymentCreateView, self).form_valid(form)
+            schedule_form.instance = self.object
+            schedule_form.save()
+
+        return result
+
+    def form_invalid(self, form, schedule_form):
+        return self.render_to_response(
+            self.get_context_data(form=form,
+                                  schedule_form=schedule_form))
 
     def get_back_url(self):
         return reverse('home')
@@ -56,6 +88,36 @@ class DeploymentUpdateView(LoginRequiredMixin, BackButtonMixin, UpdateView):
 
     def get_back_url(self):
         return reverse('home')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        schedule_form = DeploymentScheduleFormset(instance=self.object)
+        return self.render_to_response(
+            self.get_context_data(form=form,
+                                  schedule_form=schedule_form))
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        schedule_form = DeploymentScheduleFormset(self.request.POST, instance=self.object)
+
+        if (form.is_valid() and schedule_form.is_valid()):
+            return self.form_valid(form, schedule_form)
+        else:
+            return self.form_invalid(form, schedule_form)
+
+    def form_valid(self, form, schedule_form):
+        with transaction.atomic():
+            result = super(DeploymentUpdateView, self).form_valid(form)
+            schedule_form.save()
+
+        return result
+
+    def form_invalid(self, form, schedule_form):
+        return self.render_to_response(
+            self.get_context_data(form=form,
+                                  schedule_form=schedule_form))
 
     def get_success_url(self):
         return reverse('deployments:update', args=(self.kwargs['pk'],))

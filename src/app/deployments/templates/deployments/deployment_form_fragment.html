@@ -188,7 +188,7 @@
         </div>
     </div>
 
-    <fieldset style="border: 1px solid #e0e0e0; padding: 1rem; padding-bottom: 0; margin-bottom: 1rem;">
+    <fieldset style="border: 1px solid #e0e0e0; padding: 1rem; margin-bottom: 1rem;">
 
         <legend>Safeguarding</legend>
 
@@ -249,33 +249,122 @@
             </div>
         </div>
 
-        <div style="display: flex">
-            <h6>Client notification hours</h5>
-        </div>
+        {% if schedule_form is not None %}
+        <style>
+         .schedule caption {
+             text-align: left;
+             color: rgb(33,150,243);
+         }
 
-        <div style="display: flex">
-            <div id="div_id_client_notifications_from" style="flex:1">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <label for="id_client_notifications_from" class="mdl-textfield__label requiredField">
-                        Notifications from hh:mm:ss...
-                    </label>
-                    <div style="display: flex">
-                        {% crispy_field form.client_notifications_from 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right' 'pattern' '([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'%}
-                    </div>
-                </div>
-            </div>
-            <div style="width: 16px">&nbsp</div>
-            <div id="div_id_client_notifications_to" style="flex:1">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <label for="id_client_client_notifications_to" class="mdl-textfield__label requiredField">
-                        ..to hh:mm:ss
-                    </label>
-                    <div style="display: flex">
-                        {% crispy_field form.client_notifications_to 'class' 'mdl-textfield__input' 'min' '0' 'style' 'text-align:right' 'pattern' '([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'%}
-                    </div>
-                </div>
-            </div>
-        </div>
+         /* Day of week comes out of Django forms as an HTML select, but we want it to just be text. */
+         .day-of-week {
+             appearance: textfield;
+             -webkit-appearance: textfield;
+             -moz-appearance: textfield;
+             pointer-events: none;
+         }
+
+         .day-of-week::-ms-expand {
+             display: none;
+         }
+
+         /* Error styling */
+         .schedule .errorlist {
+             list-style-type: none;
+             margin: 0;
+             margin-bottom: 0.2rem;
+             padding: 0;
+             color: red;
+         }
+
+         /* Replicate the on-focus animated border style */
+         .schedule td {
+             position: relative;
+             top: 0;
+             left: 0;
+         }
+
+         .schedule td::after {
+             background-color: rgb(33,150,243);
+             bottom: 0px;
+             content: '';
+             height: 2px;
+             left: 45%;
+             position: absolute;
+             transition-duration: .2s;
+             transition-timing-function: cubic-bezier(.4,0,.2,1);
+             visibility: hidden;
+             width: 10px;
+         }
+
+         .schedule td input[type="text"] {
+             outline: none;
+         }
+
+         .schedule .is-focused::after {
+             left: 0;
+             visibility: visible;
+             width: 100%;
+         }
+
+         .schedule .is-invalid::after {
+             background-color: #d50000;
+         }
+        </style>
+        <table class="schedule">
+            <caption>Client notification hours</caption>
+            {{ schedule_form.management_form }}
+            {{ schedule_form.non_form_errors }}
+            <thead>
+                <td>Day</td>
+                <td colspan="2">Period 1</td>
+                <td colspan="2">Period 2</td>
+                <td colspan="2">Period 3</td>
+            </thead>
+            <tbody>
+
+                {% for schedule_row in schedule_form %}
+                {{ schedule_row.id }}
+                <tr>
+                    <td>
+                        <!-- A manually created read-only field:
+                             If we disable this field, its value isn't sent to the form (which it must be).
+                             We can't create two copies of it either.
+                             So, we prevent the user from interacting with it (see also style above).
+                           -->
+                        {% crispy_field schedule_row.day_of_week 'class' 'day-of-week' 'tabindex' '-1' %}
+                    </td>
+                    <td class="mdl-js-textfield">
+                        {% crispy_field schedule_row.client_notifications_from_1 'class' 'mdl-textfield__input' 'placeholder' 'hh:mm:ss' %}</td>
+                    <td class="mdl-js-textfield">
+                        {% crispy_field schedule_row.client_notifications_to_1 'class' 'mdl-textfield__input' 'placeholder' 'hh:mm:ss' %}</td>
+                    <td class="mdl-js-textfield">
+                        {% crispy_field schedule_row.client_notifications_from_2 'class' 'mdl-textfield__input' 'placeholder' 'hh:mm:ss' %}</td>
+                    <td class="mdl-js-textfield">
+                        {% crispy_field schedule_row.client_notifications_to_2 'class' 'mdl-textfield__input' 'placeholder' 'hh:mm:ss' %}</td>
+                    <td class="mdl-js-textfield">
+                        {% crispy_field schedule_row.client_notifications_from_3 'class' 'mdl-textfield__input' 'placeholder' 'hh:mm:ss' %}</td>
+                    <td class="mdl-js-textfield">
+                        {% crispy_field schedule_row.client_notifications_to_3 'class' 'mdl-textfield__input' 'placeholder' 'hh:mm:ss' %}</td>
+                </tr>
+                {% if schedule_row.errors %}
+                <tr class="errors">
+                    <td>{{ schedule_row.day_of_week.errors }}</td>
+                    <td>{{ schedule_row.client_notifications_from_1.errors }}</td>
+                    <td>{{ schedule_row.client_notifications_to_1.errors }}</td>
+
+                    <td>{{ schedule_row.client_notifications_from_2.errors }}</td>
+                    <td>{{ schedule_row.client_notifications_to_2.errors }}</td>
+
+                    <td>{{ schedule_row.client_notifications_from_3.errors }}</td>
+                    <td>{{ schedule_row.client_notifications_to_3.errors }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+
+            </tbody>
+        </table>
+        {% endif %}
 
     </fieldset>
 

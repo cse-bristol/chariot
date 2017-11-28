@@ -57,9 +57,10 @@ def _send_advisor_notifications(deployment, sensor, notification_type):
         sensor.save()
 
 def _send_client_notifications(deployment, sensor, notification_type):
-    time_now = datetime.now().time()
+    dt = datetime.now()
+    time_now = dt.time()
 
-    if _ok_to_send_notification(sensor.last_notification_sent) and deployment.client_notifications_from < time_now and time_now < deployment.client_notifications_to:
+    if _ok_to_send_notification(sensor.last_notification_sent) and deployment.should_send_client_notifications(dt.weekday(), time_now):
         email_subj = "Room %s is %s" % (sensor.location, notification_type)
         email_msg =  "Hello %s, your %s is %s your desired temperature. We will be in touch with you soon to discuss this" % (deployment.client_name, sensor.location, notification_type)
         txt_msg = email_msg

@@ -17,7 +17,6 @@ BOILER_TYPES = (
     (2, _("Electric"))
 )
 
-
 class Deployment(models.Model):
     client_name = models.CharField(max_length=255)
     address_line_one = models.CharField(max_length=255)
@@ -50,9 +49,7 @@ class Deployment(models.Model):
     advisor_phone = models.CharField(max_length=20,null=True, blank=True,help_text="Only complete if you want too receive advisor safeguarding notifications")
     client_email = models.EmailField(max_length=254,null=True, blank=True,help_text="Only complete if a client need to receive safeguarding notifications")
     client_phone =  models.CharField(max_length=20,null=True, blank=True,help_text="Only complete if a client needs to receive safeguarding notifications")
-    client_notifications_from = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,help_text="If left blank notifications will be sent when they are generated")
-    client_notifications_to = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,help_text="If left blank notifications will be sent when they are generated")
-            
+
     def __str__(self):
         return '{client} Deployment'.format(client=self.client_name)
 
@@ -63,6 +60,11 @@ class Deployment(models.Model):
         self.hub = None
         self.end_date = timezone.datetime.now()
         self.save()
+
+    def should_send_client_notifications(self, day_of_week, time):
+        schedule = self.alert_schedule_days.fetch(day_of_week = day_of_week)
+
+        return schedule.ok(time)
 
     @property
     def running(self):
@@ -91,6 +93,48 @@ class Deployment(models.Model):
 
         return 1, 'Details Incomplete'
 
+class AlertScheduleDay(models.Model):
+    day_of_week = models.IntegerField(null = False)
+    client_notifications_from_1 = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,
+                                                help_text="If left blank, no recording will happen during this period")
+    client_notifications_to_1 = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,
+                                                   help_text="If left blank, no recording will happen during this period")
+
+    client_notifications_from_2 = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,
+                                                help_text="If left blank, no recording will happen during this period")
+    client_notifications_to_2 = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,
+                                                   help_text="If left blank, no recording will happen during this period")
+
+    client_notifications_from_3 = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,
+                                                help_text="If left blank, no recording will happen during this period")
+    client_notifications_to_3 = models.TimeField(auto_now=False,auto_now_add=False,blank=True,null=True,
+                                                   help_text="If left blank, no recording will happen during this period")
+
+    deployment = models.ForeignKey(Deployment, on_delete=models.CASCADE, related_name="alert_schedule_days")
+
+    def ok(self, time):
+        ## Obviously this violates 'two or more: use a for'.
+        ## I wanted to avoid having an extra join here.
+        if (self.client_notifications_from_1 is not None and
+                self.client_notifications_to_1 is not None and
+                time >= self.client_notifications_from_1 and
+                time < self.client_notifications_to_1):
+            return True
+
+        elif (self.client_notifications_from_2 is not None and
+                self.client_notifications_to_2 is not None and
+                time >= self.client_notifications_from_2 and
+                time < self.client_notifications_to_2):
+            return True
+
+        elif (self.client_notifications_from_3 is not None and
+                self.client_notifications_to_3 is not None and
+                time >= self.client_notifications_from_3 and
+                time < self.client_notifications_to_3):
+            return True
+
+        else:
+            return False
 
 class DeploymentAnnotation(models.Model):
     text = models.TextField()

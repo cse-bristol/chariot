@@ -1,9 +1,10 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import TextInput
 
 from hubs.models import Hub
 from sensors.models import Sensor
-from .models import Deployment, DeploymentSensor, DeploymentAnnotation
+from .models import Deployment, DeploymentSensor, DeploymentAnnotation, AlertScheduleDay
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 
@@ -73,11 +74,9 @@ class DeploymentUpdateForm(forms.ModelForm):
             'advisor_email',
             'advisor_phone',
             'client_email',
-            'client_phone',
-            'client_notifications_from',
-            'client_notifications_to']
+            'client_phone'
+        ]
         model = Deployment
-
 
 class DeploymentCreateForm(forms.ModelForm):
     hub = forms.ModelChoiceField(queryset=Hub.objects.filter(deployment__isnull=True),
@@ -119,9 +118,7 @@ class DeploymentCreateForm(forms.ModelForm):
             'advisor_email',
             'advisor_phone',
             'client_email',
-            'client_phone',
-            'client_notifications_from',
-            'client_notifications_to',]
+            'client_phone']
         model = Deployment
 
 
@@ -160,3 +157,51 @@ class DeploymentSensorCreateForm(forms.ModelForm):
             'deployment': forms.HiddenInput(),
             'sensor': forms.HiddenInput()
         }
+
+class AlertScheduleDayUpdateForm(forms.ModelForm):
+    day_of_week = forms.ChoiceField(
+        choices = (
+            (0, 'Mon'),
+            (1, 'Tue'),
+            (2, 'Wed'),
+            (3, 'Thu'),
+            (4, 'Fri'),
+            (5, 'Sat'),
+            (6, 'Sun')))
+
+    class Meta:
+        fields = [
+            'day_of_week',
+            'client_notifications_from_1', 'client_notifications_to_1',
+            'client_notifications_from_2', 'client_notifications_to_2',
+            'client_notifications_from_3', 'client_notifications_to_3'
+            ]
+        model = AlertScheduleDay
+
+    def _clean_client_notifications(self, period):
+        from_name = "client_notifications_from_" + str(period)
+        to_name = "client_notifications_to_" + str(period)
+
+        from_val = self.cleaned_data.get(from_name)
+        to_val = self.cleaned_data.get(to_name)
+
+        if (from_val is None and to_val is None):
+            return
+        elif (from_val is None and to_val is not None):
+            self.add_error(from_name, ValidationError("Start time missing."))
+        elif (from_val is not None and to_val is None):
+            self.add_error(to_name, ValidationError("End time missing."))
+        elif from_val >= to_val:
+            self.add_error(from_name, ValidationError("Start time must be before end time."))
+
+    def clean(self):
+        for period in [1, 2, 3]:
+            self._clean_client_notifications(period)
+
+DeploymentScheduleFormset = forms.inlineformset_factory(Deployment,
+                                                        AlertScheduleDay,
+                                                        form=AlertScheduleDayUpdateForm,
+                                                        extra=7,
+                                                        max_num=7,
+                                                        can_delete=False,
+                                                        can_order=False)
