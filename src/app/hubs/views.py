@@ -140,6 +140,7 @@ class SensorReading(APIView):
             receive_notification(sender=self.__class__,
                                  deployment_pk=hub.deployment.pk,
                                  sensor=request.data['sensor'],
+                                 channel=request.data['channel'],
                                  temp=float(request.data['value']))
             
             return Response(reading, status=status.HTTP_201_CREATED)
