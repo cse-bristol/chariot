@@ -3,10 +3,10 @@
 from chariot.influx import influx
 from deployments.models import Deployment, DeploymentSensor
 from datetime import timedelta, datetime, time
-import smtplib
-from email.mime.text import MIMEText
 import urllib.request
 import urllib.parse
+from chariot import settings
+from django.core.mail import send_mail
 
 #@reciever(sensor_reading_recieved)
 def receive_notification(sender, deployment_pk, sensor, channel, temp):
@@ -36,7 +36,7 @@ def receive_notification(sender, deployment_pk, sensor, channel, temp):
             raise HttpResponse(status=404)
 
 def _ok_to_send_notification(last_notification_sent):
-    an_hour = timedelta(seconds=60*60)
+    an_hour = timedelta(seconds=60)
     if last_notification_sent is not None:
         if datetime.now(last_notification_sent.tzinfo) < (last_notification_sent + an_hour):
             return False
@@ -100,11 +100,4 @@ def _send_notification_sms(msg, to):
 def _send_notification_email(subj, msg_text, notification_type, to):
     if not to == "" and to is not None:
         from_addr = "Home Energy Team <nhm-support@cse.org.uk>"
-        date = datetime.now()
-        msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s" % ( from_addr, to, subj, date, msg_text )
-
-        server = smtplib.SMTP_SSL('', 587)
-        server.ehlo()
-        server.login("", "")
-        server.sendmail("nhm-support@cse.org.uk", to, msg)
-        server.quit()
+        send_mail(subj, msg_text, from_addr, [to], fail_silently=False)
