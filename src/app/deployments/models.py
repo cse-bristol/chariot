@@ -62,7 +62,7 @@ class Deployment(models.Model):
         self.save()
 
     def should_send_client_notifications(self, day_of_week, time):
-        schedule = self.alert_schedule_days.fetch(day_of_week = day_of_week)
+        schedule = self.alert_schedule_days.get(day_of_week__exact = day_of_week)
 
         return schedule.ok(time)
 
