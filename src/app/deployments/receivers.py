@@ -36,7 +36,7 @@ def receive_notification(sender, deployment_pk, sensor, channel, temp):
             raise HttpResponse(status=404)
 
 def _ok_to_send_notification(last_notification_sent):
-    an_hour = timedelta(seconds=60)
+    an_hour = timedelta(seconds=60*60)
     if last_notification_sent is not None:
         if datetime.now(last_notification_sent.tzinfo) < (last_notification_sent + an_hour):
             return False
