@@ -90,7 +90,7 @@ def _store_notification(deployment_id, sensor_deployment_id, channel_id, lower_l
 
 def _send_notification_sms(msg, to):
     if not to == "" and to is not None:
-        data =  urllib.parse.urlencode({'apikey': "", 'numbers': to, 'message' : msg, 'sender': "HomeEnergy"})
+        data =  urllib.parse.urlencode({'apikey': settings.SMS_API_KEY, 'numbers': to, 'message' : msg, 'sender': "HomeEnergy"})
         data = data.encode('utf-8')
         request = urllib.request.Request("https://api.txtlocal.com/send/?")
         f = urllib.request.urlopen(request, data)
