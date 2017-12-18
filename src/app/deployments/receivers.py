@@ -46,8 +46,12 @@ def _ok_to_send_notification(last_notification_sent):
         return True
 
 def _send_advisor_notifications(deployment, sensor, notification_type):
-    if _ok_to_send_notification(sensor.last_advisor_notification_sent):
-        email_subj = "Project 137: %s for client %s" % (notification_type, deployment.client_name)
+    dt = datetime.now()
+    time_now = dt.time()
+    
+    if _ok_to_send_notification(sensor.last_advisor_notification_sent) and deployment.should_send_client_notifications(dt.weekday(),time_now):
+
+        email_subj = "Room %s is %s" % (sensor.location, notification_type)
         email_msg = "Thermal safeguaring notification recieved.\n\n Warning room %s for Client %s and sensor %s." % (notification_type, deployment.client_name, sensor.location, )
         txt_msg = "Warning %s for Client %s and sensor %s" % (notification_type, deployment.client_name, sensor.location)
 
