@@ -1,5 +1,6 @@
 import datetime
 import json
+from django.utils.timezone import now, timedelta
 
 from django.core.urlresolvers import reverse
 from django.http import Http404
@@ -13,7 +14,7 @@ from deployments.models import Deployment, DeploymentAnnotation
 from graphs import simplify
 
 
-def query(deployment, sensor, channel, start=None, end=None, aggregation="2m"):
+def query(deployment, sensor, channel, start=None, end=None, aggregation="30m"):
     query_obj = select("MEAN").from_table(channel.id) \
         .where('deployment').eq(deployment.pk) \
         .where('sensor').eq(sensor.id)
@@ -135,7 +136,8 @@ class DeploymentGraphView(LoginRequiredMixin, BackButtonMixin, DetailView):
             raise Http404("Deployment not started")
 
         context['dateTo'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        context['dateFrom'] = deployment.start_date.strftime("%Y-%m-%d %H:%M:%S")
+        context['dateFrom'] = max(deployment.start_date,  now() - timedelta(days=14)).strftime("%Y-%m-%d %H:%M:%S")
+        
         return context
 
 class DeploymentAlertView(LoginRequiredMixin, BackButtonMixin, DetailView):
