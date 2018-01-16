@@ -136,7 +136,7 @@ class DeploymentGraphView(LoginRequiredMixin, BackButtonMixin, DetailView):
             raise Http404("Deployment not started")
 
         context['dateTo'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        context['dateFrom'] = max(deployment.start_date,  now() - timedelta(days=14)).strftime("%Y-%m-%d %H:%M:%S")
+        context['dateFrom'] = max(deployment.start_date,  now() - timedelta(days=28)).strftime("%Y-%m-%d %H:%M:%S")
         
         return context
 
